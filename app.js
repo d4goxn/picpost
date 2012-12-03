@@ -52,7 +52,7 @@ app.get('/image-list', function(req, res) { // Returns JSON. The
 	var settings = JSON.parse(fs.readFile(path.join(__dirname, '/settings.json')));
 	var batch_size = settings.max_image_batch_size !== undefined? settings.max_image_batch_size: 10;
 	var image_info = comprehension(batch_size, function(i) {
-		// TODO: get image info from database for each image.
+		// TODO: get image info, from query ordered by popularity, for each image.
 	});
 	response.writeHead(200, {'Content-Type': 'application/json'});
 	response.write(JSON.stringify(image_info));
