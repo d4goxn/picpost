@@ -4,11 +4,10 @@
  */
 
 var express = require('express'),
-	routes = require('./routes'),
 	http = require('http'),
 	fs = require('fs'),
-	mysql = require('mysql'),
 	path = require('path');
+
 
 var app = express();
 
@@ -40,22 +39,24 @@ app.get('/', function(req, res) {
 	});
 });
 
-/*
 app.get('/gallery', function(req, res) {
 	res.render('gallery', { // TODO: Create template.
 		title: 'gallery'
 	});
 });
 
-app.get('/image-list', function(req, res) {
-	var params = url.parse(req.url, true).query;
-	response.writeHead(200, {'Content-Type': 'application/json'});
-	response.write(JSON.stringify(image_list));
-});
+app.get('/image-list', function(req, res) { // Returns JSON. The 
+	var comprehension = require('./modules/require');
 
-app.get('/image', function(req, res) {
+	var params = url.parse(req.url, true).query;
+	var settings = JSON.parse(fs.readFile(path.join(__dirname, '/settings.json')));
+	var batch_size = settings.max_image_batch_size !== undefined? settings.max_image_batch_size: 10;
+	var image_info = comprehension(batch_size, function(i) {
+		// TODO: get image info from database for each image.
+	});
+	response.writeHead(200, {'Content-Type': 'application/json'});
+	response.write(JSON.stringify(image_info));
 });
-*/
 
 app.get('/upload', function(req, res) {
 	res.render('upload', {
@@ -64,6 +65,8 @@ app.get('/upload', function(req, res) {
 });
 
 app.post('/upload', function(req, res) {
+	var mysql = require('mysql');
+
 	var connection = mysql.createConnection({
 		host: 'localhost',
 		database: 'picpost',
