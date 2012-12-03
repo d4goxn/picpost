@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Dec 03, 2012 at 12:41 AM
+-- Generation Time: Dec 03, 2012 at 12:16 PM
 -- Server version: 5.5.28
 -- PHP Version: 5.4.6-1ubuntu1.1
 
@@ -32,8 +32,10 @@ CREATE TABLE IF NOT EXISTS `images` (
   `description` varchar(4000) NOT NULL,
   `filename` varchar(256) NOT NULL,
   `popularity` int(11) NOT NULL DEFAULT '0',
+  `uploaded` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
   PRIMARY KEY (`id`),
-  KEY `popularity` (`popularity`)
+  KEY `popularity` (`popularity`),
+  KEY `uploaded` (`uploaded`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=latin1 AUTO_INCREMENT=9 ;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
