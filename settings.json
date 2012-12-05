@@ -1,3 +1,10 @@
 {
-	"max_image_batch_size": 100
+	"max_image_batch_size": 100, // Maximum allowed images per request.
+
+	"db_info": {
+		"host": "localhost",
+		"database": "picpost",
+		"user": "picpost",
+		"password": "ULSM8NpFNFTvUGrT"
+	}
 }

@@ -1,6 +1,29 @@
+//-
+	This is the gallery view.
+	Hovering over a gallery item shows it's title and description overlaid on the thumbnail.
+	Clicking a gallery item expands it to full width to show the full size image, with its title and description.
+
 extends layout
 
-block content
-	h1= title
-	#gallery.container
+block controls
+	.wrapper
+		nav#order 
+			span order by:
+			a(href='/?order=random') random
+			a(href='/?order=popularity') popularity
+			a(href='/?order=uploaded') date
 
+block content
+	link(rel='stylesheet', href='/stylesheets/gallery.css')
+	.wrapper
+		div
+			//- $(#gallery).parent() is a wrapper for #gallery, which will be resized to a multiple of the gallery item width, on $(window).resize().
+			#gallery.floatfix
+				- each image in images
+					.gallery-item
+						.title
+							h3= image.title
+						img(src='/images/gallery/' + image.filename)
+						.description
+							article= image.description
+	script(src='/javascripts/gallery.js');

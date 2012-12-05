@@ -1,4 +1,44 @@
-.wrapper {
-	width: 80%;
-	margin: 0 auto;
+body {
+	margin: 0;
 }
+
+	.wrapper {
+		width: 90%;
+		margin-left: auto;
+	}
+
+	.floatfix:after {
+		content: "\a0 "; /* non breaking space in unicode */
+		display: table;
+		clear: both;
+	}
+
+	.left {
+		float: left;
+	}
+
+	.clear {
+		clear: both;
+	}
+
+	nav {
+		margin: .25em 0;
+	}
+
+		nav > * {
+			margin: .25em;
+		}
+
+	h1 {
+		position: absolute;
+		top: 6em;
+		left: 1em;
+		text-align: right;
+		-webkit-transform-origin: left top;
+		-webkit-transform: rotate(-90deg);
+	}
+
+	#status {
+		margin: 1em 0;
+		padding: 1em;
+	}

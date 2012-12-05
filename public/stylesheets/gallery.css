@@ -1,0 +1,24 @@
+#gallery {
+	background-color: #000;
+}
+
+	.gallery-item {
+		float: left;
+	}
+
+	.gallery-item.selected {
+		float: none;
+	}
+
+		.gallery-item > .title, .gallery-item > .description {
+			display: none;
+		}
+
+		.gallery-item > img {
+			display: block; /* Needed to corrent .gallery-item height. */
+			max-width: 200px;
+		}
+
+		.gallery-item.selected > img {
+			max-width: 100%;
+		}

@@ -1,9 +1,19 @@
 extends layout
 
+block stylesheets
+	link(rel='stylesheet', href='/stylesheets/form.css')
+
 block content
-	h1= title
-	form#upload-form(action='/upload', method='post', enctype='multipart/form-data')
-		input(name='title', placeholder='Title', type='text')
-		textarea(name='description', placeholder='Description')
-		input(name='image', type='file')
-		button(type='submit') Post
+	.wrapper
+		- if(typeof(status) != 'undefined' && status.length)
+			.ui-widget.left.clear
+				#status.ui-state-highlight.ui-corner-all= status
+		form#upload-form.clear(action='/upload', method='post', enctype='multipart/form-data')
+			.ui-widget.ui-widget-content.ui-corner-all.input-wrapper
+				input.input(name='image', type='file')
+			.ui-widget.ui-widget-content.ui-corner-all.input-wrapper
+				input.input(name='title', placeholder='Title', type='text')
+			.ui-widget.ui-widget-content.ui-corner-all.input-wrapper
+				textarea.input(name='description', placeholder='Description')
+			.ui-button.ui-widget.ui-state-default.ui-corner-all.ui-button-text-only
+				button.input.ui-button-text(type='submit') Post

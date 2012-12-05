@@ -1,19 +1,38 @@
 /* This is an ExpressJS app that responds to page requests by rendering Jade templates and responds to asynchronous JSON HTTP requests with info from the picpost database. */
 
+function fetch_images(callback) {
+	// TODO: Add range selection and ordering functionality.
+	var query = 'SELECT * FROM images';
+
+	var images = [];
+
+	var connection = mysql.createConnection(db_info);
+	connection.connect();
+	connection.query(query)
+	.on('result', function(row) {
+		images.push(row);
+	})
+	.on('end', function() {
+		connection.end();
+		callback(images);
+	});
+}
+
 var express = require('express'),
 	http = require('http'),
 	url = require('url'),
 	path = require('path'),
-	comprehension = require('./modules/require'),
 	fs = require('fs'),
-	mysql = require('mysql');
+	mysql = require('mysql'),
+	vsprintf = require('sprintf').vsprintf;
 
-var db_connection = mysql.createConnection({
-	host: 'localhost',
-	database: 'picpost',
-	user: 'picpost',
-	password: 'ULSM8NpFNFTvUGrT'
-});
+//var db_info = JSON.parse(fs.readFile(path.join(__dirname, '/settings.json'))).db_info;
+var db_info = {
+	'host': 'localhost',
+	'database': 'picpost',
+	'user': 'picpost',
+	'password': 'ULSM8NpFNFTvUGrT'
+};
 
 var app = express();
 app.configure(function(){
@@ -33,24 +52,22 @@ app.configure('development', function(){
 });
 
 http.createServer(app).listen(app.get('port'), function(){
-	console.log("Express server listening on port " + app.get('port'));
+	console.log('Express server listening on port ' + app.get('port'));
 });
 
 // Routes
 
 app.get('/', function(req, res) {
-	res.render('index', {
-		title: 'picpost'
+	fetch_images(function(images) {
+		console.log('Images: ', images);
+		res.render('index', {
+			title: 'gallery',
+			images: images
+		});
 	});
 });
 
-app.get('/gallery', function(req, res) {
-	res.render('gallery', { // TODO: Create template.
-		title: 'gallery'
-	});
-});
-
-app.get('/image-list', function(req, res) { // Returns info on selected images as JSON.
+app.get('/fetch-images', function(req, res) { // Returns info on selected images as JSON.
 	var params = url.parse(req.url, true).query;
 	var image_batch_size = params.image_batch_size !== undefined? params.image_batch_size: 1;
 	var offset = params.offset !== undefined? params.offset: 0;
@@ -60,28 +77,41 @@ app.get('/image-list', function(req, res) { // Returns info on selected images a
 	var max_image_batch_size = settings.max_image_batch_size !== undefined? settings.max_image_batch_size: 100;
 
 	var batch_size = Math.max(0, Math.min(image_batch_size, max_image_batch_size));
-	
-	var image_info = comprehension(batch_size, function(i) {
-		connection.connect();
-		connection.query(
-			'SELECT * FROM images LIMIT ' +
-			params.offset + ', ' + params.offset + batch_size +
-			'ORDER BY ' + order + direction? ' ' + direction: '';
-		)
-		connection.end();
-	});
-	response.writeHead(200, {'Content-Type': 'application/json'});
-	response.write(JSON.stringify(image_info));
+	var query = vsprintf(
+		'SELECT * FROM images LIMIT %(start), %(end) ORDER BY %(order) %(direction)',
+		{
+			start: mysql.escape(offset),
+			end: mysql.escape(offset + batch_size),
+			order: mysql.escape(order),
+			direction: direction? mysql.escape(direction): ''
+		}
+	);
+
+	var image_list = [];
+
+	var connection = mysql.createConnection(db_info);
+	connection.connect();
+	connection.query(query)
+		.on('result', function(row) {
+			image_info.push(row);
+		})
+		.on('end', function() {
+			connection.end();
+			response.writeHead(200, {'Content-Type': 'application/json'});
+			response.write(JSON.stringify(image_list));
+		});
 });
 
 app.get('/upload', function(req, res) {
 	res.render('upload', {
-		title: 'Upload an image.'
+		title: 'upload'
 	});
 });
 
 app.post('/upload', function(req, res) {
 	// Insert the image info in a record.
+	var error = null;
+	var connection = mysql.createConnection(db_info);
 	connection.connect();
 	connection.query(
 		'INSERT INTO images SET ?',
@@ -90,10 +120,7 @@ app.post('/upload', function(req, res) {
 			description: req.body.description
 		},
 		function(error, result) {
-			if(error) {
-				connection.end();
-				throw error;
-			}
+			if(error) throw error;
 
 			// Make a file name based on the record id, with the extension from the uploaded image.
 			var filename = result.insertId + '.' + req.files.image.name.split('.').pop().toLowerCase();
@@ -116,14 +143,16 @@ app.post('/upload', function(req, res) {
 		}
 	);
 
-	res.render('upload', {
-		title: 'Image uploaded. Upload another image.'
-	});
-});
-
-app.get('/about', function(req, res){
-	res.render('about', {
-		title: 'About'
-	});
+	if(error === null) {
+		res.render('upload', {
+			title: 'upload',
+			status: 'Image uploaded.'
+		});
+	} else {
+		res.render('upload', {
+			title: 'upload',
+			status: String(error)
+		});
+	}
 });
 

@@ -1,9 +1,31 @@
 body {
-  padding: 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
 }
 
 a {
-  color: #00B7FF;
+	color: #00B7FF;
 }
 
+a, a:hover, a:active, a:visited {
+	text-decoration: none;
+}
+
+.overlay {
+	background: rgba(0, 0, 0, .5);
+}
+
+.gallery-item-wrapper {
+	border-radius: .25em;
+}
+
+	.gallery-item-wrapper:hover {
+		box-shadow: inset .125em .125em .5em rgba(0, 0, 0, .5);
+	}
+
+		.gallery-item-wrapper .title {
+			background: rgba(0, 0, 0, .5);
+			color: #fff;
+			text-shadow: 0 0 .25em #000;
+			box-shadow: inset .125em .125em .5em rgba(0, 0, 0, .5);
+			border-radius: .25em;
+		}
