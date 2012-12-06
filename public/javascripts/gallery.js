@@ -9,6 +9,11 @@ jQuery(function($) {
 		var width = parent_width - (parent_width % gallery_item_width);
 		console.log('vars: ', parent_width, gallery_item_width);
 		gallery.width(width);
+
+		// Try twice
+		setTimeout(function() {
+			gallery.isotope('reLayout');
+		}, 1000);
 		gallery.isotope('reLayout');
 	}
 	$(window).resize(resize_gallery);
