@@ -1,4 +1,5 @@
 # Tasks #
+- Anchor each gallery item and scroll to it when selected.
 - Auto thumbnail images after upload.
 - Populate the gallery with thumbnails, swap for full size on click.
 - Repopulate upload form if invalid.

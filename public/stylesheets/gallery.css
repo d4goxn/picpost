@@ -4,10 +4,11 @@
 
 	.gallery-item {
 		float: left;
+		max-width: 200px;
 	}
 
 	.gallery-item.selected {
-		float: none;
+			max-width: 100%;
 	}
 
 		.gallery-item > .title, .gallery-item > .description {
@@ -16,9 +17,8 @@
 
 		.gallery-item > img {
 			display: block; /* Needed to corrent .gallery-item height. */
-			max-width: 200px;
+			max-width: 100%;
 		}
 
 		.gallery-item.selected > img {
-			max-width: 100%;
 		}
