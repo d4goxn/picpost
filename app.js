@@ -108,6 +108,18 @@ app.get('/upload', function(req, res) {
 	});
 });
 
+var gm = require('gm');
+// TODO: Use this in post /upload
+function thumbnail(source, destination) {
+	var write_stream = fs.createWriteStream(destination);
+	var thumbnail = gm(source).resize(200); // Width = 200px, height is based on aspect ratio.
+	console.log(thumbnail);
+	thumbnail.write(write_stream, function(error) {
+		if(error) console.log('D\'oh! ' + error);
+		else console.log('Yay!');
+	});
+}
+
 app.post('/upload', function(req, res) {
 	// Insert the image info in a record.
 	var error = null;
