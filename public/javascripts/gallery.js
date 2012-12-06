@@ -9,30 +9,30 @@ jQuery(function($) {
 		var width = parent_width - (parent_width % gallery_item_width);
 		console.log('vars: ', parent_width, gallery_item_width);
 		gallery.width(width);
+		gallery.isotope('reLayout');
 	}
 	$(window).resize(resize_gallery);
+	resize_gallery();
 
 	// Image selection
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
 		$(this).toggleClass('selected');
+		gallery.isotope('reLayout');
 	}
 	
 	$('.gallery-item').click(select_image);
 
-	// Masonry layout
+	// Isotope / Masonry layout
 	gallery.imagesLoaded(function() {
-		/*
-		gallery.masonry({
+		gallery.isotope({
 			itemSelector: '.gallery-item',
-			columnWidth: 200
+			animationEngine: 'css',
+			masonry: {
+				columnWidth: 200
+			}
 		});
-		setInterval(function() {
-			console.log('layout');
-			gallery.masonry('reload'); // Update masonry layout
-		}, 1000);
-		*/
 		resize_gallery();
 	});
 });
