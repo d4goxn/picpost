@@ -1,14 +1,6 @@
 jQuery(function($) {
 	var gallery = $('#gallery');
 
-	// Masonry layout
-	gallery.imagesLoaded(function() {
-		gallery.masonry({
-			itemSelector: '.gallery-item',
-			columnWidth: 200
-		});
-	});
-
 	// Gallery resizing
 	function resize_gallery() {
 		// Resize #gallery to a multiple of .gallery-item.outerWidth().
@@ -17,19 +9,30 @@ jQuery(function($) {
 		var width = parent_width - (parent_width % gallery_item_width);
 		console.log('vars: ', parent_width, gallery_item_width);
 		gallery.width(width);
-		gallery.masonry('reload'); // Update masonry layout
 	}
-
-	//resize_gallery();
-	//$(window).resize(resize_gallery);
+	$(window).resize(resize_gallery);
 
 	// Image selection
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
 		$(this).toggleClass('selected');
-		gallery.masonry('reload'); // Update masonry layout
 	}
 	
 	$('.gallery-item').click(select_image);
+
+	// Masonry layout
+	gallery.imagesLoaded(function() {
+		/*
+		gallery.masonry({
+			itemSelector: '.gallery-item',
+			columnWidth: 200
+		});
+		setInterval(function() {
+			console.log('layout');
+			gallery.masonry('reload'); // Update masonry layout
+		}, 1000);
+		*/
+		resize_gallery();
+	});
 });
