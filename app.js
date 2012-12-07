@@ -59,7 +59,6 @@ http.createServer(app).listen(app.get('port'), function(){
 
 app.get('/', function(req, res) {
 	fetch_images(function(images) {
-		console.log('Images: ', images);
 		res.render('index', {
 			title: 'gallery',
 			images: images
@@ -108,21 +107,20 @@ app.get('/upload', function(req, res) {
 	});
 });
 
-var gm = require('gm');
-// TODO: Use this in post /upload
-function thumbnail(source, destination) {
-	var write_stream = fs.createWriteStream(destination);
-	var thumbnail = gm(source).resize(200); // Width = 200px, height is based on aspect ratio.
-	console.log(thumbnail);
-	thumbnail.write(write_stream, function(error) {
-		if(error) console.log('D\'oh! ' + error);
-		else console.log('Yay!');
-	});
-}
-
 app.post('/upload', function(req, res) {
+	var errors = [];
+
+	// Thumbnailer
+	function thumbnail(source, destination) {
+		var gm = require('gm');
+		var thumbnail = gm(source).resize(200); // Width = 200px, height is based on aspect ratio.
+		console.log(thumbnail);
+		thumbnail.write(fs.createWriteStream(destination), function(error) {
+			if(error) errors.push(error);
+		});
+	}
+
 	// Insert the image info in a record.
-	var error = null;
 	var connection = mysql.createConnection(db_info);
 	connection.connect();
 	connection.query(
@@ -132,38 +130,55 @@ app.post('/upload', function(req, res) {
 			description: req.body.description
 		},
 		function(error, result) {
-			if(error) throw error;
+			if(!error) {
+				// Make a file name based on the record id, with the extension from the uploaded image.
+				var filename = String(result.insertId);
+				var extension = req.files.image.name.split('.').pop().toLowerCase();
 
-			// Make a file name based on the record id, with the extension from the uploaded image.
-			var filename = result.insertId + '.' + req.files.image.name.split('.').pop().toLowerCase();
+				// Set the image filename in the new record.
+				connection.query(
+					'UPDATE images SET ? WHERE id=' + result.insertId,
+					{filename: filename}
+				);
+				connection.end()
 
-			// Set the image filename in the new record.
-			connection.query(
-				'UPDATE images SET ? WHERE id=' + result.insertId,
-				{filename: filename}
-			);
-			connection.end()
-
-			// Save uploaded image to public/images/gallery
-			fs.readFile(req.files.image.path, function(error, data) {
-				var path = __dirname + '/public/images/gallery/' + filename;
-				fs.writeFile(path, data, function(error) {
-					// TODO: Decide what to do on the front end in response to a filesystem error.
-					if(error) throw error;
+				// Save uploaded image to public/images/gallery
+				fs.readFile(req.files.image.path, function(error, data) {
+					if(!error) {
+						var gallery_dir = path.join(__dirname, 'public', 'images', 'gallery');
+						var gallery_path = path.join(gallery_dir, filename + '.' + extension);
+						var thumb_dir = path.join(__dirname, 'public', 'images', 'thumbs');
+						var thumb_path = path.join(thumb_dir, filename + '.' + extension);
+						console.log(gallery_path);
+						console.log(thumb_path);
+						fs.writeFile(gallery_path, data, function(error) {
+							if(!error) {
+								thumbnail(gallery_path, thumb_path);
+							} else {
+								errors.push(error);
+							}
+						});
+					} else {
+						errors.push(error);
+					}
 				});
-			});
+			} else {
+				errors.push(error);
+			}
 		}
 	);
 
-	if(error === null) {
+	if(!errors.length) {
+		console.log('Image uploaded.');
 		res.render('upload', {
 			title: 'upload',
 			status: 'Image uploaded.'
 		});
 	} else {
+		console.log(errors);
 		res.render('upload', {
 			title: 'upload',
-			status: String(error)
+			status: String(errors)
 		});
 	}
 });
