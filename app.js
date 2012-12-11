@@ -58,8 +58,9 @@ http.createServer(app).listen(app.get('port'), function(){
 // Routes
 
 app.get('/', function(req, res) {
+	console.log('log');
 	fetch_images(function(images) {
-		console.log('Images: ', images);
+		console.log('Images: ' + images);
 		res.render('index', {
 			title: 'gallery',
 			images: images
@@ -109,8 +110,27 @@ app.get('/upload', function(req, res) {
 });
 
 app.post('/upload', function(req, res) {
+	var errors = [];
+
+	// Thumbnailer
+	function thumbnail(source, destination) {
+		//var gm = require('gm');
+		var im = require('imagemagick');
+		im.resize(
+			{
+				srcPath: source,
+				dstPath: destination,
+				width: 200
+			},
+			function(error, stdout, stderr) {
+				//if(error) errors.push(error);
+				if(error) console.log('ImageMagick error: ' + error);
+				else console.log('Resized ' + source + ' to a width of 200px.');
+			}
+		);
+	}
+
 	// Insert the image info in a record.
-	var error = null;
 	var connection = mysql.createConnection(db_info);
 	connection.connect();
 	connection.query(
@@ -120,38 +140,60 @@ app.post('/upload', function(req, res) {
 			description: req.body.description
 		},
 		function(error, result) {
-			if(error) throw error;
+			if(!error) {
+				// Make a file name based on the record id, with the extension from the uploaded image.
+				var filename = String(result.insertId);
+				var extension = req.files.image.name.split('.').pop().toLowerCase();
+				var gallery_dir = path.join('public', 'images', 'gallery');
+				var thumb_dir = path.join('public', 'images', 'thumbs');
+				var gallery_path = path.join(gallery_dir, filename + '.' + extension);
+				var thumb_path = path.join(thumb_dir, filename + '.' + extension);
+				var gallery_src = ['images', 'gallery', filename + '.' + extension].join('/');
+				var thumb_src = ['images', 'thumbs', filename + '.' + extension].join('/');
 
-			// Make a file name based on the record id, with the extension from the uploaded image.
-			var filename = result.insertId + '.' + req.files.image.name.split('.').pop().toLowerCase();
+				// Set the image filename in the new record.
+				connection.query(
+					'UPDATE images SET ? WHERE id=' + result.insertId,
+					{
+						filename: gallery_src,
+						thumb: thumb_src
+					}
+				);
+				connection.end()
 
-			// Set the image filename in the new record.
-			connection.query(
-				'UPDATE images SET ? WHERE id=' + result.insertId,
-				{filename: filename}
-			);
-			connection.end()
-
-			// Save uploaded image to public/images/gallery
-			fs.readFile(req.files.image.path, function(error, data) {
-				var path = __dirname + '/public/images/gallery/' + filename;
-				fs.writeFile(path, data, function(error) {
-					// TODO: Decide what to do on the front end in response to a filesystem error.
-					if(error) throw error;
+				// Save uploaded image to public/images/gallery
+				fs.readFile(req.files.image.path, function(error, data) {
+					if(!error) {
+						console.log(gallery_path);
+						console.log(thumb_path);
+						fs.writeFile(gallery_path, data, function(error) {
+							if(!error) {
+								thumbnail(gallery_path, thumb_path);
+							} else {
+								errors.push(error);
+							}
+						});
+					} else {
+						errors.push(error);
+					}
 				});
-			});
+			} else {
+				errors.push(error);
+			}
 		}
 	);
 
-	if(error === null) {
+	if(!errors.length) {
+		console.log('Image uploaded.');
 		res.render('upload', {
 			title: 'upload',
-			status: 'Image uploaded.'
+			status: req.files.image.name + ' was uploaded.'
 		});
 	} else {
+		console.log(errors);
 		res.render('upload', {
 			title: 'upload',
-			status: String(error)
+			status: String(errors)
 		});
 	}
 });

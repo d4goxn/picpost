@@ -17,7 +17,6 @@ jQuery(function($) {
 		gallery.isotope('reLayout');
 	}
 	$(window).resize(resize_gallery);
-	resize_gallery();
 
 	// Image selection
 	function select_image() {
@@ -40,4 +39,7 @@ jQuery(function($) {
 		});
 		resize_gallery();
 	});
+
+	// Resize the gallery as soon as isotope is ready.
+	resize_gallery();
 });
