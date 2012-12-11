@@ -58,7 +58,9 @@ http.createServer(app).listen(app.get('port'), function(){
 // Routes
 
 app.get('/', function(req, res) {
+	console.log('log');
 	fetch_images(function(images) {
+		console.log('Images: ' + images);
 		res.render('index', {
 			title: 'gallery',
 			images: images
@@ -112,12 +114,20 @@ app.post('/upload', function(req, res) {
 
 	// Thumbnailer
 	function thumbnail(source, destination) {
-		var gm = require('gm');
-		var thumbnail = gm(source).resize(200); // Width = 200px, height is based on aspect ratio.
-		console.log(thumbnail);
-		thumbnail.write(fs.createWriteStream(destination), function(error) {
-			if(error) errors.push(error);
-		});
+		//var gm = require('gm');
+		var im = require('imagemagick');
+		im.resize(
+			{
+				srcPath: source,
+				dstPath: destination,
+				width: 200
+			},
+			function(error, stdout, stderr) {
+				//if(error) errors.push(error);
+				if(error) console.log('ImageMagick error: ' + error);
+				else console.log('Resized ' + source + ' to a width of 200px.');
+			}
+		);
 	}
 
 	// Insert the image info in a record.
@@ -134,21 +144,26 @@ app.post('/upload', function(req, res) {
 				// Make a file name based on the record id, with the extension from the uploaded image.
 				var filename = String(result.insertId);
 				var extension = req.files.image.name.split('.').pop().toLowerCase();
+				var gallery_dir = path.join('public', 'images', 'gallery');
+				var thumb_dir = path.join('public', 'images', 'thumbs');
+				var gallery_path = path.join(gallery_dir, filename + '.' + extension);
+				var thumb_path = path.join(thumb_dir, filename + '.' + extension);
+				var gallery_src = ['images', 'gallery', filename + '.' + extension].join('/');
+				var thumb_src = ['images', 'thumbs', filename + '.' + extension].join('/');
 
 				// Set the image filename in the new record.
 				connection.query(
 					'UPDATE images SET ? WHERE id=' + result.insertId,
-					{filename: filename}
+					{
+						filename: gallery_src,
+						thumb: thumb_src
+					}
 				);
 				connection.end()
 
 				// Save uploaded image to public/images/gallery
 				fs.readFile(req.files.image.path, function(error, data) {
 					if(!error) {
-						var gallery_dir = path.join(__dirname, 'public', 'images', 'gallery');
-						var gallery_path = path.join(gallery_dir, filename + '.' + extension);
-						var thumb_dir = path.join(__dirname, 'public', 'images', 'thumbs');
-						var thumb_path = path.join(thumb_dir, filename + '.' + extension);
 						console.log(gallery_path);
 						console.log(thumb_path);
 						fs.writeFile(gallery_path, data, function(error) {
@@ -172,7 +187,7 @@ app.post('/upload', function(req, res) {
 		console.log('Image uploaded.');
 		res.render('upload', {
 			title: 'upload',
-			status: 'Image uploaded.'
+			status: req.files.image.name + ' was uploaded.'
 		});
 	} else {
 		console.log(errors);
