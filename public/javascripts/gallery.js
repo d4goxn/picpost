@@ -24,7 +24,8 @@ jQuery(function($) {
 		// POST because the state of the server will change. There is nothing to send in the body. 
 		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
 			// Update popularity on the gallery item.
-			$(gallery_item_element).children('.popularity').text(data.popularity);
+			console.log(data);
+			$(gallery_item_element).find('.popularity').text(data);
 			gallery.isotope('updateSortData', $(gallery_item_element));
 		});
 	}
@@ -103,11 +104,9 @@ jQuery(function($) {
 			},
 			getSortData: {
 				popularity: function(gallery_item) {
-					console.log(gallery_item.find('.popularity').text());
 					return parseInt(gallery_item.find('.popularity').text(), 10);
 				},
 				date: function(gallery_item) {
-					console.log(gallery_item.find('.upload-date').text());
 					return gallery_item.find('.upload-date').text();
 				}
 			},
