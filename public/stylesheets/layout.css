@@ -17,7 +17,8 @@ body {
 	}
 }
 
-@media only screen and (max-width: 499px) { /* butbutbut... What about 499.5px? */
+@media only screen and (max-width: 499px) {
+	/* butbutbut... What about 499.5px? */
 	h1 {
 		font-size: 1.1em;
 		margin: 0;

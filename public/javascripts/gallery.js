@@ -20,7 +20,7 @@ jQuery(function($) {
 
 	// Increase popularity when an image is clicked
 	function increment_popularity(gallery_item_element) {
-		var id = $(gallery_item_element).children('.id').text();
+		var id = $(gallery_item_element).find('.id').text();
 		// POST because the state of the server will change. There is nothing to send in the body. 
 		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
 			// Update popularity on the gallery item.
