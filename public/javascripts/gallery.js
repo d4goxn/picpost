@@ -4,7 +4,7 @@ jQuery(function($) {
 	// Gallery resizing
 	function resize_gallery() {
 		// Resize #gallery to a multiple of .gallery-item.outerWidth().
-		var gallery_item_width = $('.gallery-item').first().outerWidth(); // Will margin collapse screw this up?
+		var gallery_item_width = 200;
 		var parent_width = gallery.parent().width();
 		var width = parent_width - (parent_width % gallery_item_width);
 		console.log('vars: ', parent_width, gallery_item_width);
