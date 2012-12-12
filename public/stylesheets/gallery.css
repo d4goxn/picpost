@@ -1,5 +1,6 @@
 #gallery {
 	background-color: #000;
+	color: #fff;
 }
 
 	.gallery-item {
@@ -11,9 +12,9 @@
 			max-width: 100%;
 	}
 
-    .gallery-item.selected > .title, .gallery-item.selected > .description {
-      display: block;
-    }
+		.gallery-item.selected > .title, .gallery-item.selected > .description {
+			display: block;
+		}
 
 		.gallery-item:not(.selected) > .title, .gallery-item:not(.selected) > .description {
 			display: none;
@@ -27,14 +28,20 @@
 			display: block;
 		}
 
-    .gallery-item.selected .thumbnail {
-      display: none;
-    }
+		.gallery-item.selected .thumbnail {
+			display: none;
+		}
 
-    .gallery-item:not(.selected) .large {
-      display: none;
-    }
+		.gallery-item:not(.selected) .large {
+			display: none;
+		}
 
-    .gallery-item:not(.selected) .thumbnail {
-      display: block;
-    }
+		.gallery-item:not(.selected) .thumbnail {
+			display: block;
+		}
+
+	.gallery-item h3, .gallery-item article {
+		margin: 0;
+		padding: .5em;
+		background: #000;
+	}
