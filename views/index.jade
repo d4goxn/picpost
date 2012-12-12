@@ -9,9 +9,6 @@ block controls
 	.wrapper
 		nav#order 
 			span order by:
-			a(href='/?order=random') random
-			a(href='/?order=popularity') popularity
-			a(href='/?order=uploaded') date
 
 block content
 	link(rel='stylesheet', href='/stylesheets/gallery.css')
@@ -30,5 +27,6 @@ block content
 						img.gallery-image.large(src=image.filename)
 						if image.description
 							.description
-								article= image.description
+								article!= image.description
+						span.id.hidden= image.id
 	script(src='/javascripts/gallery.js');
