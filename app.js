@@ -58,9 +58,7 @@ http.createServer(app).listen(app.get('port'), function(){
 // Routes
 
 app.get('/', function(req, res) {
-	console.log('log');
 	fetch_images(function(images) {
-		console.log('Images: ' + images);
 		res.render('index', {
 			title: 'gallery',
 			images: images
@@ -119,7 +117,6 @@ app.post('/hit/:id', function(req, res) {
 	}
 
 	function handle_result(result) {
-		console.log(result);
 		if(result.affectedRows === 1) respond();
 		else if (result.affectedRows === 0) {
 			res.writeHead(404);
@@ -211,8 +208,7 @@ app.post('/upload', function(req, res) {
 				// Save uploaded image to public/images/gallery
 				fs.readFile(req.files.image.path, function(error, data) {
 					if(!error) {
-						console.log(gallery_path);
-						console.log(thumb_path);
+						console.log('Uploading ' + gallery_path + ' and thumbnailing to ' + thumb_path);
 						fs.writeFile(gallery_path, data, function(error) {
 							if(!error) {
 								thumbnail(gallery_path, thumb_path);
@@ -231,7 +227,6 @@ app.post('/upload', function(req, res) {
 	);
 
 	if(!errors.length) {
-		console.log('Image uploaded.');
 		res.render('upload', {
 			title: 'upload',
 			status: req.files.image.name + ' was uploaded.'

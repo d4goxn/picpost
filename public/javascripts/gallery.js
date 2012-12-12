@@ -29,21 +29,31 @@ jQuery(function($) {
 		});
 	}
 
-	function sort_by() {
-		// Sort parameter should be formatted like: #<paramter>[.desc|.asc]
-		var parameters = $(this).attr('href').split('[#\.]')[0];
-		console.log('Sorting by ' + parameters);
-		var parameter = parameters[0];
-		if(parameters.length === 2)
+	function sort_by(parameter, ascending) {
+		console.log('sort by', parameter, ascending);
+		if(ascending == undefined)
 			gallery.isotope({
-				sortBy: parameter,
-				sortAscending: parameters[2] === 'desc'? false: true
+				sortBy: parameter
 			});
 		else
-			gallery.isotope({sortBy: parameter});
+			gallery.isotope({
+				sortBy: parameter,
+				sortAscending: ascending
+			});
 	}
 
-	$('#sort-options').children().click(sort_by);
+	$('#sort-options').children().click(function(event) {
+		// Sort parameter should be formatted like: #<paramter>[.desc|.asc]
+		var parameters = $(this).attr('href').split('/sort/')[1].split('/');
+		var parameter = parameters[0];
+
+		if(parameters[1] != undefined) {
+			sort_by(parameter, parameters[1] === 'ascending');
+		} else {
+			sort_by(parameter);
+		}
+		event.preventDefault();
+	});
 
 	function expand_image(gallery_item_element) {
 		$(gallery_item_element).addClass('selected');
@@ -93,9 +103,11 @@ jQuery(function($) {
 			},
 			getSortData: {
 				popularity: function(gallery_item) {
-					return gallery_item.find('.popularity').text();
+					console.log(gallery_item.find('.popularity').text());
+					return parseInt(gallery_item.find('.popularity').text(), 10);
 				},
 				date: function(gallery_item) {
+					console.log(gallery_item.find('.upload-date').text());
 					return gallery_item.find('.upload-date').text();
 				}
 			},

@@ -1,6 +1,5 @@
 //-
 	This is the gallery view.
-	Hovering over a gallery item shows it's title and description overlaid on the thumbnail.
 	Clicking a gallery item expands it to full width to show the full size image, with its title and description.
 
 extends layout
@@ -8,14 +7,14 @@ extends layout
 block controls
 	.wrapper
 		nav#sort-options order by:
-			a(href='#popularity') popularity
-			a(href='#upload-date') date
+			a(href='/sort/popularity/descending') popularity
+			a(href='/sort/date/ascending') date
+			a(href='/sort/random') random
 
 block content
 	link(rel='stylesheet', href='/stylesheets/gallery.css')
 	link(rel='stylesheet', href='/stylesheets/isotope-transitions.css')
 	.wrapper
-		- console.log(images)
 		div
 			//- $(#gallery).parent() is a wrapper for #gallery, which will be resized to a multiple of the gallery item width, on $(window).resize().
 			#gallery.floatfix
