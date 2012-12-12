@@ -10,11 +10,11 @@ jQuery(function($) {
 		console.log('vars: ', parent_width, gallery_item_width);
 		gallery.width(width);
 
+		gallery.isotope('reLayout');
 		// Try twice
 		setTimeout(function() {
 			gallery.isotope('reLayout');
 		}, 1000);
-		gallery.isotope('reLayout');
 	}
 	$(window).resize(resize_gallery);
 
@@ -28,13 +28,11 @@ jQuery(function($) {
 		});
 	}
 
-	// Image selection
-	// TODO: Scroll to gallery-item using the id.
+	// Image selection when gallery-item is clicked. Clicking again deselects.
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
 		if(!$(this).hasClass('selected')) {
-			// Do not increase popularity when clicking on a gallery-item to deselect it.
 			increment_popularity(this);
 			$(this).addClass('selected');
 
@@ -44,7 +42,7 @@ jQuery(function($) {
 					{
 						scrollTop: $('.selected').offset().top
 					},
-					1000
+					'slow'
 				);
 			});
 		} else {
@@ -66,7 +64,4 @@ jQuery(function($) {
 		});
 		resize_gallery();
 	});
-
-	// Resize the gallery as soon as isotope is ready.
-	resize_gallery();
 });
