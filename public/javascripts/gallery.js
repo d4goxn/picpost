@@ -18,10 +18,23 @@ jQuery(function($) {
 	}
 	$(window).resize(resize_gallery);
 
+	// Increase popularity when an image is clicked
+	function increment_popularity(gallery_item_element) {
+		var id = $(gallery_item_element).children('.id').text();
+		// POST because the state of the server will change. There is nothing to send in the body. 
+		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
+			// Update popularity on the gallery item.
+			$(gallery_item_element).children('.popularity').text(data.popularity);
+		});
+	}
+
 	// Image selection
+	// TODO: Scroll to gallery-item using the id.
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
+		if(!$(this).hasClass('selected')) // Do not increase popularity when clicking on a gallery-item to deselect it.
+			increment_popularity(this);
 		$(this).toggleClass('selected');
 		gallery.isotope('reLayout');
 	}
