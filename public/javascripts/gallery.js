@@ -25,6 +25,7 @@ jQuery(function($) {
 		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
 			// Update popularity on the gallery item.
 			$(gallery_item_element).children('.popularity').text(data.popularity);
+			gallery.isotope('updateSortData', $(gallery_item_element));
 		});
 	}
 
