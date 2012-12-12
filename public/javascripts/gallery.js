@@ -28,26 +28,40 @@ jQuery(function($) {
 		});
 	}
 
+	function expand_image(gallery_item_element) {
+		$(gallery_item_element).addClass('selected');
+		gallery.isotope('reLayout', function() {
+			// Scroll to the selected image, because the image can expand beyond the lower edge of the window.
+			$('html, body').animate(
+				{
+					scrollTop: $('.selected').offset().top
+				},
+				'slow'
+			);
+		});
+	}
+
+	function relax_image(gallery_item_element) {
+		$(gallery_item_element).removeClass('selected');
+		gallery.isotope('reLayout', function() {
+			$('html, body').animate(
+				{
+					scrollTop: 0
+				},
+				'slow'
+			);
+		});
+	}
+
 	// Image selection when gallery-item is clicked. Clicking again deselects.
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
 		if(!$(this).hasClass('selected')) {
 			increment_popularity(this);
-			$(this).addClass('selected');
-
-			gallery.isotope('reLayout', function() {
-				// Scroll to the selected image, because the image can expand beyond the lower edge of the window.
-				$('html, body').animate(
-					{
-						scrollTop: $('.selected').offset().top
-					},
-					'slow'
-				);
-			});
+			expand_image(this);
 		} else {
-			$(this).removeClass('selected');
-			gallery.isotope('reLayout');
+			relax_image(this);
 		}
 	}
 	
