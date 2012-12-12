@@ -33,10 +33,24 @@ jQuery(function($) {
 	function select_image() {
 		// If an already selected gallery item is clicked, it should be deselected.
 		gallery.children().not(this).removeClass('selected');
-		if(!$(this).hasClass('selected')) // Do not increase popularity when clicking on a gallery-item to deselect it.
+		if(!$(this).hasClass('selected')) {
+			// Do not increase popularity when clicking on a gallery-item to deselect it.
 			increment_popularity(this);
-		$(this).toggleClass('selected');
-		gallery.isotope('reLayout');
+			$(this).addClass('selected');
+
+			gallery.isotope('reLayout', function() {
+				// Scroll to the selected image, because the image can expand beyond the lower edge of the window.
+				$('html, body').animate(
+					{
+						scrollTop: $('.selected').offset().top
+					},
+					1000
+				);
+			});
+		} else {
+			$(this).removeClass('selected');
+			gallery.isotope('reLayout');
+		}
 	}
 	
 	$('.gallery-item').click(select_image);
