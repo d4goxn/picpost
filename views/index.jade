@@ -20,13 +20,14 @@ block content
 			#gallery.floatfix
 				- each image in images
 					.gallery-item
-						if image.title
-							.title
-								h3= image.title
-						img.gallery-image.thumbnail(src=image.thumb)
-						img.gallery-image.large(src=image.filename)
-						if image.description
-							.description
-								article!= image.description
-						span.id.hidden= image.id
+						.centered
+							if image.title
+								.title
+									h3= image.title
+							img.gallery-image.thumbnail(src=image.thumb)
+							img.gallery-image.large(src=image.filename)
+							if image.description
+								.description
+									article!= image.description
+							span.id.hidden= image.id
 	script(src='/javascripts/gallery.js');
