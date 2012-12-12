@@ -7,6 +7,10 @@ body {
 		margin-left: auto;
 	}
 
+	.centered {
+		margin: 0 auto;
+	}
+
 	.floatfix:after {
 		content: "\a0 "; /* non breaking space in unicode */
 		display: table;
