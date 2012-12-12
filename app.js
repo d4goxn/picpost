@@ -103,6 +103,53 @@ app.get('/fetch-images', function(req, res) { // Returns info on selected images
 		});
 });
 
+app.post('/hit/:id', function(req, res) {
+	// Increment the popularity of the identified image, if it exists.
+	function respond() {
+		connection.query(
+			'SELECT * FROM images WHERE ?',
+			{id: req.params.id},
+			function(error, results) {
+				//console.log(res.json(results[0].popularity));
+				res.json(results[0].popularity);
+				res.send();
+				connection.end();
+			}
+		);
+	}
+
+	function handle_result(result) {
+		console.log(result);
+		if(result.affectedRows === 1) respond();
+		else if (result.affectedRows === 0) {
+			res.writeHead(404);
+			res.send();
+			connection.end();
+		} else {
+			res.writeHead(500);
+			res.send();
+			connection.end();
+		}
+	}
+
+	var connection = mysql.createConnection(db_info);
+	connection.connect();
+	connection.query(
+		'UPDATE images SET popularity = popularity + 1 WHERE ?',
+		{id: req.params.id},
+		function(error, result) {
+			if(!error) {
+				handle_result(result);
+			} else {
+				res.writeHead(500);
+				res.send();
+				connection.end();
+				throw error;
+			}
+		}
+	);
+});
+
 app.get('/upload', function(req, res) {
 	res.render('upload', {
 		title: 'upload'
