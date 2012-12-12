@@ -7,8 +7,9 @@ extends layout
 
 block controls
 	.wrapper
-		nav#order 
-			span order by:
+		nav#sort-options order by:
+			a(href='#popularity') popularity
+			a(href='#upload-date') date
 
 block content
 	link(rel='stylesheet', href='/stylesheets/gallery.css')
@@ -30,11 +31,9 @@ block content
 								if image.description
 									article!= image.description
 								aside
-									.popularity
-										span Rank: 
-										span= image.popularity
-									.uploaded
-										span Uploaded: 
-										span= image.uploaded
+									div Rank: 
+										span.popularity= image.popularity
+									div Uploaded: 
+										span.upload-date= image.uploaded
 									span.id.hidden= image.id
 	script(src='/javascripts/gallery.js');
