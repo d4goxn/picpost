@@ -12,11 +12,11 @@
 			max-width: 100%;
 	}
 
-		.gallery-item.selected > .title, .gallery-item.selected > .description {
+		.gallery-item.selected .title, .gallery-item.selected .description {
 			display: block;
 		}
 
-		.gallery-item:not(.selected) > .title, .gallery-item:not(.selected) > .description {
+		.gallery-item:not(.selected) .title, .gallery-item:not(.selected) .description {
 			display: none;
 		}
 
