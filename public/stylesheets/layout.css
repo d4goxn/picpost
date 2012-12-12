@@ -2,10 +2,20 @@ body {
 	margin: 0;
 }
 
+@media only screen and (min-width: 500px) {
 	.wrapper {
-		width: 90%;
-		margin-left: auto;
+		margin-left: 5em;
 	}
+
+	h1 {
+		position: absolute;
+		top: 6em;
+		left: .5em;
+		text-align: right;
+		-webkit-transform-origin: left top;
+		-webkit-transform: rotate(-90deg);
+	}
+}
 
 	.centered {
 		margin: 0 auto;
@@ -36,15 +46,6 @@ body {
 		nav > * {
 			margin: .25em;
 		}
-
-	h1 {
-		position: absolute;
-		top: 6em;
-		left: 1em;
-		text-align: right;
-		-webkit-transform-origin: left top;
-		-webkit-transform: rotate(-90deg);
-	}
 
 	#status {
 		margin: 1em 0;
