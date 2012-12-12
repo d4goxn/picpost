@@ -1,5 +1,6 @@
 body {
-	font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+	font: 14px Ubuntu;
+	font-weight: 400;
 }
 
 a {

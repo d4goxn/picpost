@@ -26,8 +26,15 @@ block content
 									h3= image.title
 							img.gallery-image.thumbnail(src=image.thumb)
 							img.gallery-image.large(src=image.filename)
-							if image.description
-								.description
+							.description
+								if image.description
 									article!= image.description
-							span.id.hidden= image.id
+								aside
+									.popularity
+										span Rank: 
+										span= image.popularity
+									.uploaded
+										span Uploaded: 
+										span= image.uploaded
+									span.id.hidden= image.id
 	script(src='/javascripts/gallery.js');
