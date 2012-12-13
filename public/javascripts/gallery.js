@@ -1,5 +1,43 @@
 jQuery(function($) {
 	var gallery = $('#gallery');
+	var sorting = {
+		sortBy: 'date',
+		sortAscending: false
+	};
+
+	// Increase popularity when an image is clicked
+	function increment_popularity(gallery_item_element) {
+		var id = $(gallery_item_element).find('.id').text();
+		// POST because the state of the server will change. There is nothing to send in the body. 
+		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
+			// Update popularity on the gallery item.
+			console.log(data);
+			$(gallery_item_element).find('.popularity').text(data);
+			gallery.isotope('updateSortData', $(gallery_item_element)).isotope();
+		});
+	}
+
+	// Client side sorting
+	// TODO: GET a list of sorted list of images from the server.
+	$('.sort-parameter').click(function() {
+		sorting.sortBy = $(this).attr('href').split('/').pop();
+		console.log('Sorting by', sorting.sortBy);
+		gallery.isotope(sorting);
+		event.preventDefault();
+	});
+
+	$('.sort-order').click(function() {
+		sorting.sortAscending = $(this).attr('href').split('/').pop() === 'ascending';
+		console.log('Reordering', sorting.sortAscending);
+		gallery.isotope(sorting);
+		event.preventDefault();
+	});
+
+	$('.sort-random').click(function() {
+		console.log('Shuffling');
+		gallery.isotope('shuffle');
+		event.preventDefault();
+	});
 
 	// Gallery resizing
 	function resize_gallery() {
@@ -17,44 +55,6 @@ jQuery(function($) {
 		}, 1000);
 	}
 	$(window).resize(resize_gallery);
-
-	// Increase popularity when an image is clicked
-	function increment_popularity(gallery_item_element) {
-		var id = $(gallery_item_element).find('.id').text();
-		// POST because the state of the server will change. There is nothing to send in the body. 
-		$.post('/hit/' + encodeURIComponent(id), {}, function(data) {
-			// Update popularity on the gallery item.
-			console.log(data);
-			$(gallery_item_element).find('.popularity').text(data);
-			gallery.isotope('updateSortData', $(gallery_item_element));
-		});
-	}
-
-	function sort_by(parameter, ascending) {
-		console.log('sort by', parameter, ascending);
-		if(ascending == undefined)
-			gallery.isotope({
-				sortBy: parameter
-			});
-		else
-			gallery.isotope({
-				sortBy: parameter,
-				sortAscending: ascending
-			});
-	}
-
-	$('#sort-options').children().click(function(event) {
-		// Sort parameter should be formatted like: #<paramter>[.desc|.asc]
-		var parameters = $(this).attr('href').split('/sort/')[1].split('/');
-		var parameter = parameters[0];
-
-		if(parameters[1] != undefined) {
-			sort_by(parameter, parameters[1] === 'ascending');
-		} else {
-			sort_by(parameter);
-		}
-		event.preventDefault();
-	});
 
 	function expand_image(gallery_item_element) {
 		$(gallery_item_element).addClass('selected');

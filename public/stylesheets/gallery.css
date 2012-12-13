@@ -14,6 +14,7 @@
 
 		.gallery-item.selected .title, .gallery-item.selected .description {
 			display: block;
+			background: #000;
 		}
 
 		.gallery-item:not(.selected) .title, .gallery-item:not(.selected) .description {

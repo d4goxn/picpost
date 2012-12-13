@@ -6,10 +6,13 @@ extends layout
 
 block controls
 	.wrapper
-		nav#sort-options order by:
-			a(href='/sort/popularity/descending') popularity
-			a(href='/sort/date/ascending') date
-			a(href='/sort/random') random
+		aside
+			nav#sort-options order by:
+				a(href='/popularity').sort-parameter popularity
+				a(href='/date').sort-parameter date
+				a(href='/random').sort-random random
+				a(href='/ascending').sort-order ↑
+				a(href='/descending').sort-order ↓
 
 block content
 	link(rel='stylesheet', href='/stylesheets/gallery.css')
@@ -30,7 +33,7 @@ block content
 								if image.description
 									article!= image.description
 								aside
-									div Rank: 
+									div Love: 
 										span.popularity= image.popularity
 									div Uploaded: 
 										span.upload-date= image.uploaded
