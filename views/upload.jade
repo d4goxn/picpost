@@ -8,9 +8,6 @@ block content
 		- if(typeof(status) != 'undefined' && status.length)
 			.ui-widget.left.clear
 				#status.ui-state-highlight.ui-corner-all= status
-		- else
-			.ui-widget.left.clear
-				#status.ui-state-highlight.ui-corner-all This site is just a demonstration; your image will not actually be uploaded.
 		form#upload-form.clear(action='/upload', method='post', enctype='multipart/form-data')
 			.ui-widget.ui-widget-content.ui-corner-all.input-wrapper
 				input.input(name='image', type='file')

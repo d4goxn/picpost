@@ -154,13 +154,6 @@ app.get('/upload', function(req, res) {
 });
 
 app.post('/upload', function(req, res) {
-	// Uploads are disabled.
-	res.render('upload', {
-		title: 'upload',
-		status: req.files.image.name + ' would have been uploaded, but uploads are disabled because of bandwidth concerns. This site is just a demonstration.'
-	});
-	return;
-
 	var errors = [];
 
 	// Thumbnailer
