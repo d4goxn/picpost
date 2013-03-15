@@ -28,7 +28,7 @@ var express = require('express'),
 
 var db_info;
 if(process.env.VCAP_SERVICES) {
-	var services = process.env.VCAP_SERVICES['mysql-5.1'];
+	var services = JSON.parse(process.env.VCAP_SERVICES)['mysql-5.1'];
 	for(var i = 0; i < services.length; i++) {
 		if(services[i].name == 'picpost') {
 			credentials = services[i].credentials;
@@ -51,7 +51,7 @@ if(process.env.VCAP_SERVICES) {
 
 var app = express();
 app.configure(function(){
-	app.set('port', process.env.PORT || 3000);
+	app.set('port', process.env.VCAP_APP_PORT || process.env.PORT || 3000);
 	app.set('views', __dirname + '/views');
 	app.set('view engine', 'jade');
 	app.use(express.favicon());

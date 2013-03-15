@@ -7,6 +7,10 @@
   },
   "dependencies": {
     "express": "3.0.3",
-    "jade": "*"
+    "jade": "*",
+	"sprintf": "0.1.1",
+	"imagemagick": "0.1.3",
+	"mysql": "2.0.0-alpha4",
+	"gm": "1.6.1"
   }
 }
