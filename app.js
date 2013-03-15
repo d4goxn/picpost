@@ -26,13 +26,28 @@ var express = require('express'),
 	mysql = require('mysql'),
 	vsprintf = require('sprintf').vsprintf;
 
-//var db_info = JSON.parse(fs.readFile(path.join(__dirname, '/settings.json'))).db_info;
-var db_info = {
-	'host': 'localhost',
-	'database': 'picpost',
-	'user': 'picpost',
-	'password': 'ULSM8NpFNFTvUGrT'
-};
+var db_info;
+if(process.env.VCAP_SERVICES) {
+	var services = process.env.VCAP_SERVICES['mysql-5.1'];
+	for(var i = 0; i < services.length; i++) {
+		if(services[i].name == 'picpost') {
+			credentials = services[i].credentials;
+			db_info = {
+				host: credentials.hostname,
+				database: credentials.name,
+				user: credentials.username,
+				password: credentials.password
+			};
+		}
+	}
+} else {
+	db_info = {
+		'host': 'localhost',
+		'database': 'picpost',
+		'user': 'picpost',
+		'password': 'ULSM8NpFNFTvUGrT'
+	};
+}
 
 var app = express();
 app.configure(function(){
